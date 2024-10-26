@@ -1,0 +1,29 @@
+
+services:
+  db:
+    image: postgres:latest
+    ports:
+      - 5435:5435
+    volumes:
+      - ~/.rule_engine:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-rule_engine}
+      - POSTGRES_USER=${POSTGRES_USER:-rule_engine_USER}
+      - POSTGRES_DB=${POSTGRES_DB:-rule_engine_DB}
+  
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    # restart: always
+
+  
+
+
+networks:
+  app_network:
+    driver: bridge
